@@ -1,6 +1,6 @@
 # MAG2RDF
 
-MAG2RDF contains the code for creating the __Microsoft Academic Knowledge Graph (MAKG)__.
+MAG2RDF contains the code for generating RDF files of the __[Microsoft Academic Knowledge Graph (MAKG)](http://ma-graph.org)__ .
 
 The main class is [MAG2RDF](MAG2RDF/src/main/MAG2RDF.java).
 
