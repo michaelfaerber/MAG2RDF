@@ -53,5 +53,27 @@ For each input file, the program creates a corresponding output file in the RDF 
 * Papers.txt.nt
 * PaperUrls.txt.nt
 
-## Contact
-In case of questions or requests, feel free to contact us at [Michael Färber](https://sites.google.com/view/michaelfaerber), michael.faerber@kit&#46;edu
+## Contact & More Information
+More information can be found in my ISWC'19 paper [The Microsoft Academic Knowledge Graph: A Linked Data Source with 8 Billion Triples of Scholarly Data](http://dbis.informatik.uni-freiburg.de/content/team/faerber/papers/MAKG_ISWC2019.pdf).
+
+Feel free to reach out to me in case of questions or comments:
+
+[Michael Färber](https://sites.google.com/view/michaelfaerber), michael.faerber@kit.edu
+
+## How to Cite
+Please cite my work (described in [this paper](http://dbis.informatik.uni-freiburg.de/content/team/faerber/papers/MAKG_ISWC2019.pdf)) as follows:
+```
+@inproceedings{DBLP:conf/semweb/Farber19,
+  author    = {Michael F{\"{a}}rber},
+  title     = "{The Microsoft Academic Knowledge Graph: {A} Linked Data Source with
+               8 Billion Triples of Scholarly Data}",
+  booktitle = "{Proceedings of the 18th International Semantic Web Conference}",
+  series    = "{ISWC'19}",
+  location  = "{Auckland, New Zealand}",
+  pages     = {113--129},
+  year      = {2019},
+  url       = {https://doi.org/10.1007/978-3-030-30796-7\_8},
+  doi       = {10.1007/978-3-030-30796-7\_8}
+}
+
+```
