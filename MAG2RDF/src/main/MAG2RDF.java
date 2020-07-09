@@ -6,18 +6,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.validator.routines.UrlValidator;
+
 
 import textannotation.FullTextAnnotationClientXML;
 import textannotation.MentionInAnnotation;
 import textannotation.TextAnnotation;
-import utilities.FileUtility;
+
 import utilities.NxUtil;
+import utilities.UrlUtility;
 
 
 
@@ -36,7 +35,7 @@ public class MAG2RDF {
 	
 	/** global parameters **/
 	/** using x-LiSA for entity linking **/
-	public static String xlisaTextannotationsServiceURI = "http://132.230.150.127:8080/text-annotation-with-offset-Nov14/";
+	public static String xlisaTextannotationsServiceURI = "http://129.13.152.190:8080/text-annotation-with-offset-Nov14";
 	
 	static String kgPrefix = "http://ma-graph.org/";
 	
@@ -63,38 +62,41 @@ public class MAG2RDF {
 	
 	// input: path to MAG txt files.
 	// example run:
-	// java -jar -Xmx50g MAG2RDF.jar /vol4/faerberm/data/mag/dumps/2018-07-19 /vol4/faerberm/data/mag/dumps/2018-07-19/output
+	// java -jar -Xmx50g MAG2RDF.jar /vol4/faerberm/data/mag/dumps/2018-07-19
 	public static void main(String[] args) throws IOException {
 		
-		String bwuniclusterpath = "/home/faerberm/inRDF" ; 
+		String bwuniclusterpath = "";
+		if(args[0].equals("home")) {
+			bwuniclusterpath = "C:/Users/FranzKrause/git/MAG2RDF/MAG2RDF" ; 
+		}else {
+			bwuniclusterpath = "/slow/users/mfa/makg/mag-2019-12-26/" ; 
+		}
 
 		// assuming: all input files exist.
+		File conferenceSeries_ = new File(bwuniclusterpath + "/mag/" + "ConferenceSeries.txt");
 		File affiliations_ = new File(bwuniclusterpath + "/mag/" + "Affiliations.txt");
 		File authors_ = new File(bwuniclusterpath + "/mag/" + "Authors.txt");
-		File conferenceInstances_ = new File(bwuniclusterpath + "/mag/" + "ConferenceInstances.txt");
-		File conferenceSeries_ = new File(bwuniclusterpath + "/mag/" + "ConferenceSeries.txt");
-		File fieldOfStudyChildren_ = new File(bwuniclusterpath + "/mag/" + "FieldOfStudyChildren.txt");
+		File conferenceInstances_ = new File(bwuniclusterpath + "/mag/" + "ConferenceInstances.txt");		
+		File fieldOfStudyChildren_ = new File(bwuniclusterpath + "/advanced/" + "FieldOfStudyChildren.txt");
 		File fieldOfStudyRelationship_ = new File(bwuniclusterpath + "/advanced/" + "RelatedFieldOfStudy.txt"); // this was renamed, since 2018-11-09, old file name: FieldOfStudyRelationship
-		File fieldsOfStudy_ = new File(bwuniclusterpath + "/mag/" + "FieldsOfStudy.txt");
+		File fieldsOfStudy_ = new File(bwuniclusterpath + "/advanced/" + "FieldsOfStudy.txt");
 		File journals_ = new File(bwuniclusterpath + "/mag/" + "Journals.txt");
 		File paperAbstractsInvertedIndex_ = new File(bwuniclusterpath + "/nlp/" + "PaperAbstractsInvertedIndex.txt");
 		File paperAuthorAffiliations_ = new File(bwuniclusterpath + "/mag/" + "PaperAuthorAffiliations.txt");
 		File paperCitationContexts_ = new File(bwuniclusterpath + "/nlp/" + "PaperCitationContexts.txt");
-		File paperFieldsOfStudy_ = new File(bwuniclusterpath + "/mag/" + "PaperFieldsOfStudy.txt");
-		File paperLanguages_ = new File(bwuniclusterpath + "/mag/" + "PaperLanguages.txt");
+		File paperFieldsOfStudy_ = new File(bwuniclusterpath + "/advanced/" + "PaperFieldsOfStudy.txt");
+		File paperLanguages_ = new File(bwuniclusterpath + "/mag/" + "PaperLanguages.txt"); //FK language tags are now found in paperUrls_
 		File paperReferences_ = new File(bwuniclusterpath + "/mag/" + "PaperReferences.txt");
 		File papers_ = new File(bwuniclusterpath + "/mag/" + "Papers.txt");
 		File paperUrls_ = new File(bwuniclusterpath + "/mag/" + "PaperUrls.txt");
 		
-		String[] schemes = {"http","https"};
-		UrlValidator urlValidator = new UrlValidator(schemes); // works also without provided schemes (even better)
+		UrlUtility urlValidator = new UrlUtility();
 		
 		FullTextAnnotationClientXML fac = new FullTextAnnotationClientXML();
 		fac.getAnnotationsByWholeDocAnnotation("test"); // test if text annotation tool is online.
 					
 		/** cache for xlisa textannotation service: (text to be annotated) -> retrieved entity **/
 		HashMap<String,String> cacheTextAnnotations = new HashMap<String,String>();
-
 		
 		try {
 			
@@ -105,7 +107,9 @@ public class MAG2RDF {
 			BufferedReader inAffiliations = new BufferedReader(new FileReader(affiliations_));
 			BufferedWriter outAffiliations = new BufferedWriter(new FileWriter(affiliations_ + ".nt"));
 			String line = inAffiliations.readLine();
+			
 			while (line != null) {
+				
 				String[] affilliationLine = line.split("\t");
 				// 1
 				String affiliationEntity = "<" + kgPrefix + "entity/" + affilliationLine[0] + ">";
@@ -131,7 +135,9 @@ public class MAG2RDF {
 				
 				// 6 homepage
 				if(!affilliationLine[5].equals("")) {
-					affiliationsRDFOutput.append(affiliationEntity + " " + foafHomepageURI + " " + "<" + affilliationLine[5] + ">" + " .\n");
+					if(urlValidator.isValid((affilliationLine[5]))){
+						affiliationsRDFOutput.append(affiliationEntity + " " + foafHomepageURI + " " + "<" + affilliationLine[5] + ">" + " .\n");
+					}	
 				}
 				/** FYI: Not used 
 				 *  if(urlValidator.isValid(affilliationLine[5])) { ..
@@ -142,8 +148,8 @@ public class MAG2RDF {
 				if(!affilliationLine[6].equals("")) {
 					// to Wikipedia
 					affiliationsRDFOutput.append(affiliationEntity + " " + seeAlsoURI + " " + "<" + affilliationLine[6].replaceFirst("https://", "http://") + ">" + " .\n");
-					// to DBpedia
-					affiliationsRDFOutput.append(affiliationEntity + " " + sameAsURI + " " + "<" + affilliationLine[6].replaceFirst("https://en.wikipedia.org/wiki/", "http://dbpedia.org/resource/") + ">" + " .\n");
+					// to DBpedia //FK https error resolved
+					affiliationsRDFOutput.append(affiliationEntity + " " + sameAsURI + " " + "<" + (affilliationLine[6].replaceFirst("https://", "http://")).replaceFirst("http://en.wikipedia.org/wiki/", "http://dbpedia.org/resource/") + ">" + " .\n");
 				}
 				
 				// 8 paper count
@@ -154,12 +160,13 @@ public class MAG2RDF {
 				if(!affilliationLine[8].equals(""))
 					affiliationsRDFOutput.append(affiliationEntity + " " + returnOwnProperty("citationCount") + " " + returnXSDInteger(affilliationLine[8]) + " .\n");
 				
-				// 10 created date
-				if(!affilliationLine[9].equals(""))
-					affiliationsRDFOutput.append(affiliationEntity + " " + createdURI + " " + returnXSDDate(affilliationLine[9]) + " .\n");
+				// 10 created date //FK 12 (old:10)
+				if(!affilliationLine[11].equals(""))
+					affiliationsRDFOutput.append(affiliationEntity + " " + createdURI + " " + returnXSDDate(affilliationLine[11]) + " .\n");
 
 //				affiliationsRDFOutput.append("\n");
 				outAffiliations.write(affiliationsRDFOutput.toString());
+				outAffiliations.flush();
 				affiliationsRDFOutput = new StringBuilder();
 				line = inAffiliations.readLine();
 			}
@@ -176,7 +183,9 @@ public class MAG2RDF {
 			BufferedReader inAuthors = new BufferedReader(new FileReader(authors_));
 			BufferedWriter outAuthors = new BufferedWriter(new FileWriter(authors_ + ".nt"));
 			line = inAuthors.readLine();
+
 			while (line != null) {
+
 				String[] authorLine = line.split("\t");
 				// 1
 				String authorEntity = "<" + kgPrefix + "entity/" + authorLine[0] + ">";
@@ -190,7 +199,9 @@ public class MAG2RDF {
 				// 4 name
 				if(!authorLine[3].equals(""))
 					authorsRDFOutput.append(authorEntity + " " + foafNameURI + " " + returnXSDString(authorLine[3]) + " .\n");
-				
+					//String chinese = NxUtil.escapeForMarkup(authorLine[3]);
+					//FileUtils.writeStringToFile(new File(bwuniclusterpath + "test1.txt"), chinese + " .\n");
+					//FileUtils.writeStringToFile(new File(bwuniclusterpath + "test2.txt"), StringEscapeUtils.unescapeHtml4(chinese) + " .\n");
 				// 5 affiliation/member of -> Affiliation entity (use directly our entity, not grid.ac URL!)
 				if(!authorLine[4].equals(""))
 					authorsRDFOutput.append(authorEntity + " " + memberOfURI + " " + "<" + kgPrefix + "entity/" + authorLine[4] + ">" + " .\n");
@@ -221,7 +232,7 @@ public class MAG2RDF {
 			line = inConferenceInstances.readLine();
 			
 			while (line != null) {
-				
+
 				String[] conferenceInstanceLine = line.split("\t");
 				// 1
 				String conferenceInstanceEntity = "<" + kgPrefix + "entity/" + conferenceInstanceLine[0] + ">";
@@ -233,18 +244,21 @@ public class MAG2RDF {
 //				if(!conferenceInstanceLine[1].equals(""))
 //					conferenceInstancesRDFOutput.append(conferenceInstanceEntity + " " + returnOwnProperty("rank") + " " + returnXSDInteger(conferenceInstanceLine[1]) + " .\n");
 				
-				// 3 (old: 4) name
+				// 2 (old: 3) name
 				if(!conferenceInstanceLine[2].equals(""))
-					conferenceInstancesRDFOutput.append(conferenceInstanceEntity + " " + foafNameURI + " " + returnXSDString(conferenceInstanceLine[3]) + " .\n");
+					conferenceInstancesRDFOutput.append(conferenceInstanceEntity + " " + foafNameURI + " " + returnXSDString(conferenceInstanceLine[2]) + " .\n");
 				
-				// 4 link to conference series entity, generate corresponding URI
+				// 3 link to conference series entity, generate corresponding URI
 				if(!conferenceInstanceLine[3].equals(""))
-					conferenceInstancesRDFOutput.append(conferenceInstanceEntity + " " + partOfURI + " " + "<" + kgPrefix + "entity/" + conferenceInstanceLine[4] + ">" + " .\n");
+					conferenceInstancesRDFOutput.append(conferenceInstanceEntity + " " + partOfURI + " " + "<" + kgPrefix + "entity/" + conferenceInstanceLine[3] + ">" + " .\n");
 				
 				// 5 (old: 6) location, link to DBpedia.
 				if(!conferenceInstanceLine[4].equals("")) {
 					/** USE X-LISA **/
 					// e.g., in cache: http://dbpedia.org/resource/Karlsruhe
+//					cacheTextAnnotations.entrySet().forEach(entry->{
+//					    System.out.println(entry.getKey() + " " + entry.getValue());  
+//					 }); 
 					if(cacheTextAnnotations.containsKey(conferenceInstanceLine[4])) {
 //						System.out.println("reuse");
 						// if in cache, then reuse the annotation:
@@ -253,6 +267,8 @@ public class MAG2RDF {
 					else {
 						String foundDBpediaEntity = null;
 						List<TextAnnotation> dBPediaAnnotations = fac.getAnnotationsByWholeDocAnnotation(conferenceInstanceLine[4]);
+//						System.out.println("NOW");
+//						System.out.println(java.util.Arrays.toString(dBPediaAnnotations.toArray()));
 						Iterator<TextAnnotation> iter = dBPediaAnnotations.iterator();
 						boolean notFoundYet = true;
 						while(iter.hasNext()) {
@@ -261,7 +277,7 @@ public class MAG2RDF {
 							while(iter2.hasNext()) {
 								MentionInAnnotation mia = iter2.next();
 								if(mia.getStart() == 0) {
-									foundDBpediaEntity = ta.getURL_EN().replaceFirst("https://en.wikipedia.org/wiki/", "http://dbpedia.org/resource/");
+									foundDBpediaEntity = ta.getURL_EN().replaceFirst("http://en.wikipedia.org/wiki/", "http://dbpedia.org/resource/");
 									notFoundYet = false;
 									break;
 								}
@@ -283,12 +299,15 @@ public class MAG2RDF {
 					}
 				}
 				
-				// 6 (old: 7) URL, homepage
-				/** same here: no more check with  if(urlValidator.isValid(conferenceInstanceLine[6])) {, since sometimes still valid URLs **/
+				//homepage
+				/** same here: no more check with  if(urlValidator.isValid(conferenceInstanceLine[6])) {, since sometimes still valid URLs 
+				 * **/
 				if(!conferenceInstanceLine[5].equals(""))
-					conferenceInstancesRDFOutput.append(conferenceInstanceEntity + " " + foafHomepageURI + " " + "<" + conferenceInstanceLine[5] + ">" + " .\n");
+					if(urlValidator.isValid((conferenceInstanceLine[5]))){
+						conferenceInstancesRDFOutput.append(conferenceInstanceEntity + " " + foafHomepageURI + " " + "<" + conferenceInstanceLine[5] + ">" + " .\n");
+					}
 				
-				// 7/8 (old: 8/9): start/end date
+				// start/end date
 				if(!conferenceInstanceLine[6].equals(""))
 					conferenceInstancesRDFOutput.append(conferenceInstanceEntity + " " + startTimeURI + " " + returnXSDDate(conferenceInstanceLine[6]) + " .\n");
 				if(!conferenceInstanceLine[7].equals(""))
@@ -312,9 +331,9 @@ public class MAG2RDF {
 				if(!conferenceInstanceLine[13].equals(""))
 					conferenceInstancesRDFOutput.append(conferenceInstanceEntity + " " + returnOwnProperty("citationCount") + " " + returnXSDInteger(conferenceInstanceLine[13]) + " .\n");
 				
-				// 15 (old: 16) created date
-				if(!conferenceInstanceLine[14].equals(""))
-					conferenceInstancesRDFOutput.append(conferenceInstanceEntity + " " + createdURI + " " + returnXSDDate(conferenceInstanceLine[14]) + " .\n");
+				//FK 17
+				if(!conferenceInstanceLine[16].equals(""))
+					conferenceInstancesRDFOutput.append(conferenceInstanceEntity + " " + createdURI + " " + returnXSDDate(conferenceInstanceLine[16]) + " .\n");
 				
 				outConferenceInstances.write(conferenceInstancesRDFOutput.toString());
 				conferenceInstancesRDFOutput = new StringBuilder();
@@ -334,7 +353,9 @@ public class MAG2RDF {
 			BufferedReader inConferenceSeries = new BufferedReader(new FileReader(conferenceSeries_));
 			BufferedWriter outConferenceSeries = new BufferedWriter(new FileWriter(conferenceSeries_ + ".nt"));
 			line = inConferenceSeries.readLine();
+
 			while (line != null) {
+
 				String[] conferenceSeriesLine = line.split("\t");
 				// 1
 				String conferenceSeriesEntity = "<" + kgPrefix + "entity/" + conferenceSeriesLine[0] + ">";
@@ -379,7 +400,9 @@ public class MAG2RDF {
 			BufferedReader inFieldsOfStudy = new BufferedReader(new FileReader(fieldsOfStudy_));
 			BufferedWriter outFieldsOfStudy = new BufferedWriter(new FileWriter(fieldsOfStudy_ + ".nt"));
 			line = inFieldsOfStudy.readLine();
+			
 			while (line != null) {
+
 				String[] fieldOfStudyLine = line.split("\t");
 				// 1
 				String fieldOfStudyEntity = "<" + kgPrefix + "entity/" + fieldOfStudyLine[0] + ">";
@@ -426,7 +449,9 @@ public class MAG2RDF {
 			BufferedReader inFieldsOfStudyChildren = new BufferedReader(new FileReader(fieldOfStudyChildren_));
 			BufferedWriter outFieldsOfStudyChildren = new BufferedWriter(new FileWriter(fieldOfStudyChildren_ + ".nt"));
 			line = inFieldsOfStudyChildren.readLine();
+			
 			while (line != null) {
+				
 				String[] fieldOfStudyChildrenLine = line.split("\t");
 				// 1
 				String fieldEntity = "<" + kgPrefix + "entity/" + fieldOfStudyChildrenLine[0] + ">";
@@ -456,16 +481,19 @@ public class MAG2RDF {
 			BufferedReader inFieldsOfStudyRelationship = new BufferedReader(new FileReader(fieldOfStudyRelationship_));
 			BufferedWriter outFieldsOfStudyRelationship = new BufferedWriter(new FileWriter(fieldOfStudyRelationship_ + ".nt"));
 			line = inFieldsOfStudyRelationship.readLine();
+			
+
 			while (line != null) {
 				String[] fieldOfStudyRelationshipLine = line.split("\t");
-				if(!fieldOfStudyRelationshipLine[0].equals("") && !fieldOfStudyRelationshipLine[3].equals("")) {
+				//FK entity2 -> fieldOfStudyRelationshipLine[2] (fieldOfStudyRelationshipLine[3])
+				if(!fieldOfStudyRelationshipLine[0].equals("") && !fieldOfStudyRelationshipLine[2].equals("")) {
 					// 1 entity one
 					String entity1 = "<" + kgPrefix + "entity/" + fieldOfStudyRelationshipLine[0] + ">";
 					// 4 entity two
-					String entity2 = "<" + kgPrefix + "entity/" + fieldOfStudyRelationshipLine[3] + ">";
+					String entity2 = "<" + kgPrefix + "entity/" + fieldOfStudyRelationshipLine[2] + ">";
 					// 
-					String type1 = fieldOfStudyRelationshipLine[2];
-					String type2 = fieldOfStudyRelationshipLine[5];
+					String type1 = fieldOfStudyRelationshipLine[1]; //FK fieldOfStudyRelationshipLine[2] -> fieldOfStudyRelationshipLine[1]
+					String type2 = fieldOfStudyRelationshipLine[3]; //FK fieldOfStudyRelationshipLine[5] -> fieldOfStudyRelationshipLine[3]
 					
 					if(type1.equals("disease") && type2.equals("symptom")) {
 						String property = "diseaseHasSymptom";
@@ -541,14 +569,16 @@ public class MAG2RDF {
 			BufferedReader inJournals = new BufferedReader(new FileReader(journals_));
 			BufferedWriter outJournals = new BufferedWriter(new FileWriter(journals_ + ".nt"));
 			line = inJournals.readLine();
+			
 			while (line != null) {
+
 				String[] journalLine = line.split("\t");
 				// 1
 				String journalEntity = "<" + kgPrefix + "entity/" + journalLine[0] + ">";
 				// entity type
 				journalsRDFOutput.append(journalEntity + " " + rdfTypeURI + " " + "<" + kgPrefix + "class/Journal>" + " .\n");
 				// 2 rank
-				if(!journalLine[0].equals(""))
+				if(!journalLine[1].equals("")) //FK resolved error: previously journalLine[0].equals("")
 					journalsRDFOutput.append(journalEntity + " " + returnOwnProperty("rank") + " " + returnXSDInteger(journalLine[1]) + " .\n");
 				// 4 name
 				if(!journalLine[3].equals(""))
@@ -592,7 +622,9 @@ public class MAG2RDF {
 			BufferedReader inPapers = new BufferedReader(new FileReader(papers_));
 			BufferedWriter outPapers = new BufferedWriter(new FileWriter(papers_ + ".nt"));
 			line = inPapers.readLine();
+			
 			while (line != null) {
+
 				String[] paperLine = line.split("\t");
 				// 1
 				String paperEntity = "<" + kgPrefix + "entity/" + paperLine[0] + ">";
@@ -672,9 +704,9 @@ public class MAG2RDF {
 				if(!paperLine[19].equals("") && paperLine[19].matches("-?\\d+"))
 					papersRDFOutput.append(paperEntity + " " + returnOwnProperty("estimatedCitationCount") + " " + returnXSDInteger(paperLine[19]) + " .\n");
 				/** 21: OriginalVenue: left out (so far). **/
-				// 22 (old: 21) created date
-				if(!paperLine[21].equals(""))
-					papersRDFOutput.append(paperEntity + " " + createdURI + " " + returnXSDDate(paperLine[21]) + " .\n");
+				// 22 (old: 21) created date //FK 23 (old: 22) created date
+				if(!paperLine[22].equals(""))
+					papersRDFOutput.append(paperEntity + " " + createdURI + " " + returnXSDDate(paperLine[22]) + " .\n");
 				
 				outPapers.write(papersRDFOutput.toString());
 				papersRDFOutput = new StringBuilder();
@@ -694,8 +726,10 @@ public class MAG2RDF {
 			StringBuilder paperAbstractInvertedIndexRDFOutput = new StringBuilder();
 			BufferedReader inPaperAbstractInvertedIndex = new BufferedReader(new FileReader(paperAbstractsInvertedIndex_));
 			BufferedWriter outPaperAbstractInvertedIndex = new BufferedWriter(new FileWriter(paperAbstractsInvertedIndex_ + ".nt"));
-			line = inPaperAbstractInvertedIndex.readLine();
+			line = inPaperAbstractInvertedIndex.readLine();	
+
 			while (line != null) {
+
 				String[] paperAbstractLine = line.split("\t");
 				// 1
 				String paperEntity = "<" + kgPrefix + "entity/" + paperAbstractLine[0] + ">";
@@ -730,7 +764,9 @@ public class MAG2RDF {
 			BufferedReader inPaperAuthorAffiliations = new BufferedReader(new FileReader(paperAuthorAffiliations_));
 			BufferedWriter outPaperAuthorAffiliations = new BufferedWriter(new FileWriter(paperAuthorAffiliations_ + ".nt"));
 			line = inPaperAuthorAffiliations.readLine();
+			
 			while (line != null) {
+				
 				String[] paperAuthorAffilLine = line.split("\t");
 				if(!paperAuthorAffilLine[1].equals("")) {
 					// 1 paper id
@@ -761,7 +797,9 @@ public class MAG2RDF {
 			BufferedReader inPaperCitationContexts = new BufferedReader(new FileReader(paperCitationContexts_));
 			BufferedWriter outPaperCitationContexts = new BufferedWriter(new FileWriter(paperCitationContexts_ + ".nt"));
 			line = inPaperCitationContexts.readLine();
+			
 			while (line != null) {
+				
 				String[] paperCitationContexts = line.split("\t");
 				
 				if(!paperCitationContexts[2].equals("")) {
@@ -802,7 +840,9 @@ public class MAG2RDF {
 			BufferedReader inPaperFieldsOfStudy = new BufferedReader(new FileReader(paperFieldsOfStudy_));
 			BufferedWriter outPaperFieldsOfStudy = new BufferedWriter(new FileWriter(paperFieldsOfStudy_ + ".nt"));
 			line = inPaperFieldsOfStudy.readLine();
+			
 			while (line != null) {
+				
 				String[] paperFieldOfStudy = line.split("\t");
 				if(!paperFieldOfStudy[1].equals("")) {
 					// 1 paper
@@ -828,19 +868,22 @@ public class MAG2RDF {
 			/** PaperLanguages.txt **/
 			System.out.println("### Start PaperLanguages.txt ###");
 			StringBuilder paperLanguagesRDFOutput = new StringBuilder();
-			BufferedReader inPaperLanguages = new BufferedReader(new FileReader(paperLanguages_));
+			BufferedReader inPaperLanguages = new BufferedReader(new FileReader(paperUrls_)); // FK language tag is now in paperUrls_
 			BufferedWriter outPaperLanguages = new BufferedWriter(new FileWriter(paperLanguages_ + ".nt"));
 			line = inPaperLanguages.readLine();
+			
 			while (line != null) {
 				String[] paperLanguage = line.split("\t");
-				// 
-				if(!paperLanguage[1].equals("")) {
-					String paperEntity = "<" + kgPrefix + "entity/" + paperLanguage[0] + ">";
-					// 2 language code for paper
-					paperLanguagesRDFOutput.append(paperEntity + " " + dctermsLanguageURI + " " + returnXSDLang(paperLanguage[1]) + " .\n");
-					
-					outPaperLanguages.write(paperLanguagesRDFOutput.toString());
+				if(paperLanguage.length > 3) { //FK check if language tag exists
+					if(!paperLanguage[3].equals("")) { //FK was previously 1
+						String paperEntity = "<" + kgPrefix + "entity/" + paperLanguage[0] + ">";
+						// 2 language code for paper
+						paperLanguagesRDFOutput.append(paperEntity + " " + dctermsLanguageURI + " " + returnXSDLang(paperLanguage[3]) + " .\n"); //FK was paperLanguage[1]
+						
+						outPaperLanguages.write(paperLanguagesRDFOutput.toString());
+					}
 				}
+				
 				paperLanguagesRDFOutput = new StringBuilder();
 				line = inPaperLanguages.readLine();
 			}
@@ -851,6 +894,7 @@ public class MAG2RDF {
 //			System.out.println(paperLanguagesRDFOutput.toString());
 			System.out.println("### Finished PaperLanguages.txt ###");
 			
+			
 			/** PaperRecommendations.txt left out **/
 			
 			/** PaperReferences.txt **/
@@ -859,7 +903,9 @@ public class MAG2RDF {
 			BufferedReader inPaperReferences = new BufferedReader(new FileReader(paperReferences_));
 			BufferedWriter outPaperReferences = new BufferedWriter(new FileWriter(paperReferences_ + ".nt"));
 			line = inPaperReferences.readLine();
+			
 			while (line != null) {
+				
 				String[] paperReference = line.split("\t");
 				if(!paperReference[1].equals("")) {
 					// 
@@ -887,7 +933,9 @@ public class MAG2RDF {
 			BufferedReader inPaperUrls = new BufferedReader(new FileReader(paperUrls_));
 			BufferedWriter outPaperUrls = new BufferedWriter(new FileWriter(paperUrls_ + ".nt"));
 			line = inPaperUrls.readLine();
+			
 			while (line != null) {
+				
 				String[] paperUrl = line.split("\t");
 				// 
 				String paperEntity = "<" + kgPrefix + "entity/" + paperUrl[0] + ">";
@@ -895,9 +943,8 @@ public class MAG2RDF {
 				// 3 source URL
 				/** no more else if(urlValidator.isValid(paperUrl[2])) {, since sometimes still valid **/
 				if(!paperUrl[2].equals("")) {
-					paperUrlsRDFOutput.append(paperEntity + " " + "<http://purl.org/spar/fabio/hasURL>" + " " + "<" + NxUtil.escapeForMarkup(paperUrl[2]) + ">" + " .\n");
-					// paperUrlsRDFOutput.append(paperEntity + " " + "<http://purl.org/spar/fabio/hasURL>" + " " + "<" + URLEncoder.encode(paperUrl[2],"UTF-8" ) + ">" + " .\n");
-					outPaperUrls.write(paperUrlsRDFOutput.toString());
+						paperUrlsRDFOutput.append(paperEntity + " " + "<http://purl.org/spar/fabio/hasURL>" + " " + "<" + NxUtil.escapeForMarkup(paperUrl[2]) + ">" + " .\n");
+						outPaperUrls.write(paperUrlsRDFOutput.toString());					
 				}
 				
 				paperUrlsRDFOutput = new StringBuilder();
@@ -915,7 +962,7 @@ public class MAG2RDF {
 			e.printStackTrace();
 		}
 		
-//		System.out.println("the end.");
+		System.out.println("the end.");
 	}
 	
 	public static String returnOwnProperty(String propName) {

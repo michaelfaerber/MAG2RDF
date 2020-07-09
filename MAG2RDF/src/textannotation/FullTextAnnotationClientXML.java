@@ -13,16 +13,20 @@ import com.sun.jersey.client.urlconnection.URLConnectionClientHandler;
 import main.MAG2RDF;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import nu.xom.Builder;
@@ -61,6 +65,12 @@ public class FullTextAnnotationClientXML {
         String xmlstring = "";
         xmlstring = annotser.retrieveXMLFromServiceGivenWholeDoc(StringEscapeUtils.escapeXml(doc));
         xmlstring = xmlstring.replaceAll("\\n", ""); // TODO: simple XML processing ;) (remove linebreaks)
+//        byte[] latin1 = xmlstring.getBytes();
+//        byte[] utf8 = new String(latin1, "ISO-8859-1").getBytes("UTF-8");
+//        xmlstring = new String(utf8, StandardCharsets.UTF_8);
+//        FileUtils.writeStringToFile(new File("test.txt"), xmlstring);
+//		  xmlstring = xmlstring.replaceAll("UTF-8", "ISO-8859-3");
+//        xmlstring = new String(xmlstring_temp.getBytes("UTF-8"), "ISO-8859-3");
         List<TextAnnotation> listOfAnnotationsInDoc = getAllAnnotations(xmlstring);
         return listOfAnnotationsInDoc;
     }
@@ -99,7 +109,8 @@ public class FullTextAnnotationClientXML {
         Document doc = null;
         Nodes annotationNodes = new Nodes();
         try {
-            doc = builder.build(new ByteArrayInputStream(xmlstring.getBytes()));
+        	//FK previously xmlstring.getBytes()
+            doc = builder.build(new ByteArrayInputStream(xmlstring.getBytes(Charsets.UTF_8)));
         } catch (ValidityException e) {
             e.printStackTrace();
             return null;
@@ -249,8 +260,8 @@ public class FullTextAnnotationClientXML {
                 try {
 
                     String strToTransfer = "<item><text>" + docAsString + "</text></item>";
-                    ClientResponse response = webResource.path("/").accept(MediaType.APPLICATION_XML).type(MediaType.APPLICATION_XML).post(ClientResponse.class, strToTransfer);
-		        // accept("application/xml").type("application/xml")
+                    ClientResponse response = client.resource(TEXT_ANNOT_BASE_URI).path("/").accept(MediaType.APPLICATION_XML).type(MediaType.APPLICATION_XML + "; charset=UTF-8").post(ClientResponse.class, strToTransfer); //FK previously .type(MediaType.APPLICATION_XML)
+                    // accept("application/xml").type("application/xml")
 
                     // check response status code
                     if (response.getStatus() != 200) {
@@ -261,7 +272,6 @@ public class FullTextAnnotationClientXML {
                         System.err.print("Return Length: " + response.getLength());
                         System.err.print(" Input text maybe too long or special chars, so no end tags.\n");
                         //System.out.print("Text to be annotated is/was:" + docAsString);
-                        System.out.println();
                         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<item>\n<text>\r\n</text>\n<WikifiedText></WikifiedText>\n<annotations>\n</annotations>\n</item>";
                     }
 
@@ -270,6 +280,7 @@ public class FullTextAnnotationClientXML {
                     return outputXml;
 
                 } catch (Exception e) {
+                	//System.out.println(e.getMessage());
                     if (retries < 5) { // try up to 10 times
                         try {
                             Thread.sleep(2000);         // wait

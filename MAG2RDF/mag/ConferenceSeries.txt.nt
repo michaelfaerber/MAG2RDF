@@ -1,0 +1,60 @@
+<http://ma-graph.org/entity/1134804816> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ma-graph.org/class/ConferenceSeries> .
+<http://ma-graph.org/entity/1134804816> <http://ma-graph.org/property/rank> "12800"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/1134804816> <http://xmlns.com/foaf/0.1/name> "International Conference on Interactive Digital Storytelling"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://ma-graph.org/entity/1134804816> <http://ma-graph.org/property/paperCount> "521"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/1134804816> <http://ma-graph.org/property/citationCount> "1934"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/1134804816> <http://purl.org/dc/terms/created> "2016-06-24"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://ma-graph.org/entity/1165160117> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ma-graph.org/class/ConferenceSeries> .
+<http://ma-graph.org/entity/1165160117> <http://ma-graph.org/property/rank> "14900"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/1165160117> <http://xmlns.com/foaf/0.1/name> "Semantic Web Applications and Tools for Life Sciences"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://ma-graph.org/entity/1165160117> <http://ma-graph.org/property/paperCount> "76"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/1165160117> <http://ma-graph.org/property/citationCount> "156"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/1165160117> <http://purl.org/dc/terms/created> "2016-06-24"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://ma-graph.org/entity/1192093291> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ma-graph.org/class/ConferenceSeries> .
+<http://ma-graph.org/entity/1192093291> <http://ma-graph.org/property/rank> "12176"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/1192093291> <http://xmlns.com/foaf/0.1/name> "Testbeds and Research Infrastructures for the DEvelopment of NeTworks and COMmunities"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://ma-graph.org/entity/1192093291> <http://ma-graph.org/property/paperCount> "577"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/1192093291> <http://ma-graph.org/property/citationCount> "4565"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/1192093291> <http://purl.org/dc/terms/created> "2016-06-24"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://ma-graph.org/entity/1199066382> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ma-graph.org/class/ConferenceSeries> .
+<http://ma-graph.org/entity/1199066382> <http://ma-graph.org/property/rank> "10380"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/1199066382> <http://xmlns.com/foaf/0.1/name> "International Conference on Bioinformatics"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://ma-graph.org/entity/1199066382> <http://ma-graph.org/property/paperCount> "7346"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/1199066382> <http://ma-graph.org/property/citationCount> "11231"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/1199066382> <http://purl.org/dc/terms/created> "2016-06-24"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://ma-graph.org/entity/1201746639> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ma-graph.org/class/ConferenceSeries> .
+<http://ma-graph.org/entity/1201746639> <http://ma-graph.org/property/rank> "15490"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/1201746639> <http://xmlns.com/foaf/0.1/name> "Autonomous and Intelligent Systems"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://ma-graph.org/entity/1201746639> <http://ma-graph.org/property/paperCount> "163"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/1201746639> <http://ma-graph.org/property/citationCount> "825"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/1201746639> <http://purl.org/dc/terms/created> "2016-06-24"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://ma-graph.org/entity/2621640373> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ma-graph.org/class/ConferenceSeries> .
+<http://ma-graph.org/entity/2621640373> <http://ma-graph.org/property/rank> "12450"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/2621640373> <http://xmlns.com/foaf/0.1/name> "Electrical Design of Advanced Packaging and Systems Symposium"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://ma-graph.org/entity/2621640373> <http://ma-graph.org/property/paperCount> "797"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/2621640373> <http://ma-graph.org/property/citationCount> "864"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/2621640373> <http://purl.org/dc/terms/created> "2017-06-15"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://ma-graph.org/entity/2622088384> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ma-graph.org/class/ConferenceSeries> .
+<http://ma-graph.org/entity/2622088384> <http://ma-graph.org/property/rank> "10934"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/2622088384> <http://xmlns.com/foaf/0.1/name> "International Conference on Measuring Technology and Mechatronics Automation"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://ma-graph.org/entity/2622088384> <http://ma-graph.org/property/paperCount> "3644"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/2622088384> <http://ma-graph.org/property/citationCount> "5255"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/2622088384> <http://purl.org/dc/terms/created> "2017-06-15"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://ma-graph.org/entity/2622501483> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ma-graph.org/class/ConferenceSeries> .
+<http://ma-graph.org/entity/2622501483> <http://ma-graph.org/property/rank> "11574"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/2622501483> <http://xmlns.com/foaf/0.1/name> "International Workshop on Antenna Technology"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://ma-graph.org/entity/2622501483> <http://ma-graph.org/property/paperCount> "1423"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/2622501483> <http://ma-graph.org/property/citationCount> "3699"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/2622501483> <http://purl.org/dc/terms/created> "2017-06-15"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://ma-graph.org/entity/2623061857> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ma-graph.org/class/ConferenceSeries> .
+<http://ma-graph.org/entity/2623061857> <http://ma-graph.org/property/rank> "13210"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/2623061857> <http://xmlns.com/foaf/0.1/name> "International Meeting for Future of Electron Devices, Kansai"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://ma-graph.org/entity/2623061857> <http://ma-graph.org/property/paperCount> "412"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/2623061857> <http://ma-graph.org/property/citationCount> "232"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/2623061857> <http://purl.org/dc/terms/created> "2017-06-15"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://ma-graph.org/entity/2755564649> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ma-graph.org/class/ConferenceSeries> .
+<http://ma-graph.org/entity/2755564649> <http://ma-graph.org/property/rank> "14136"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/2755564649> <http://xmlns.com/foaf/0.1/name> "International Conference on Event-based Control, Communication, and Signal Processing"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://ma-graph.org/entity/2755564649> <http://ma-graph.org/property/paperCount> "159"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/2755564649> <http://ma-graph.org/property/citationCount> "260"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://ma-graph.org/entity/2755564649> <http://purl.org/dc/terms/created> "2017-09-25"^^<http://www.w3.org/2001/XMLSchema#date> .
