@@ -109,7 +109,7 @@ Please cite my work (described in [this paper](http://dbis.informatik.uni-freibu
 * 2019-07-15
 
 ## Changes for Version 2020-07-09
-
+```
 A. MAG Dump-Files:
 
 	1. Affiliations.txt.nt
@@ -135,3 +135,4 @@ B: MAG2RDF Code:
 	1. textannotation/TullTextAnnotationClientXML
 		i.   Line 113: Changed 'new ByteArrayInputStream(xmlstring.getBytes())' to 'new ByteArrayInputStream(xmlstring.getBytes(Charsets.UTF_8))'
 		ii.  Line 263: Changed '.type(MediaType.APPLICATION_XML)' to '.type(MediaType.APPLICATION_XML + "; charset=UTF-8")'
+```
